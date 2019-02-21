@@ -8,6 +8,7 @@ val scalazVersion = "7.2.27"
 val specs2Version = "4.3.4"
 
 libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-core" % scalazVersion,
-  "org.specs2" %% "specs2-core" % specs2Version % "test",
-  "org.specs2" %% "specs2-mock" % specs2Version % "test")
+  "org.scalaz" %% "scalaz-core"   % scalazVersion,
+  "org.scalaz" %% "scalaz-effect" % scalazVersion,
+  "org.specs2" %% "specs2-core"   % specs2Version % "test",
+  "org.specs2" %% "specs2-mock"   % specs2Version % "test")
