@@ -1,21 +1,9 @@
-import scalaz.{-\/, \/, \/-}
+import _root_.io.martinlover.ttt.controller.Game
 import scalaz.effect.{IO, SafeApp}
-import scalaz.effect.IO._
 
-object MyApp extends SafeApp {
+object Boot extends SafeApp {
 
-  override def runc: IO[Unit] = myAppLogic
+  override def runc: IO[Unit] =
+    IO.tailrecM(new Game().play)(0)
 
-  def myAppLogic: IO[Unit] =
-    IO.tailrecM(io)(0)
-
-  def io(i: Int): IO[Int \/ Unit] =
-    for {
-      _ <- putStrLn("Hello! What is your name?")
-      n <- readLn
-      _ <- putStrLn("Hello, " + n + ", good to meet you!")
-    } yield {
-      if (i >= 3) \/-()
-      else -\/(i + 1)
-    }
 }
