@@ -6,6 +6,7 @@ class Board {
   def isFinished(): Boolean = false
 
   private val board: Map[Point, Int] = Map.empty
+
 }
 
 object Board {
