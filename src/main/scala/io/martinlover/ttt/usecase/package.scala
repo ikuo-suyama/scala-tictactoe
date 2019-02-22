@@ -4,9 +4,9 @@ import io.martinlover.ttt.model.{Black, Board, Player}
 
 package object usecase {
 
-  sealed abstract class Results
-  case class Continue(s: Status) extends Results
-  case object Finish             extends Results
+  sealed abstract class Result
+  case class Continue(s: Status) extends Result
+  case object Finish             extends Result
 
   case class Status(board: Board = new Board, turn: Player = Black)
 
