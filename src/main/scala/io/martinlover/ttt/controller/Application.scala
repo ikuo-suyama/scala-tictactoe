@@ -1,11 +1,12 @@
 package io.martinlover.ttt.controller
 
-import scalaz.{-\/, \/, \/-}
+import io.martinlover.ttt.model.Board.Point
+import io.martinlover.ttt.model.Player
+import io.martinlover.ttt.usecase._
+import scalaz.Scalaz._
 import scalaz.effect.IO
 import scalaz.effect.IO._
-import _root_.io.martinlover.ttt.usecase._
-import _root_.io.martinlover.ttt.model.Player
-import scalaz.Scalaz._
+import scalaz.{-\/, \/, \/-}
 
 trait Application {
   def run(): IO[Unit]
@@ -22,19 +23,34 @@ class StdIOApplicationImpl(game: Game) extends Application {
       _      <- displayResults(result)
     } yield {
       result match {
-        case Continue(s) => -\/(s)
-        case Finish      => \/-()
+        case Continue(s)     => -\/(s)
+        case InvalidInput(s) => -\/(s)
+        case Finish          => \/-()
       }
     }
 
-  protected def playerInput(player: Player): IO[String] =
+  protected def playerInput(player: Player): IO[Option[Point]] =
     for {
       _     <- putStr(s"Player ${player.displayName}: ")
       input <- readLn
-    } yield input
+    } yield validate(input)
 
-  protected def move(s: Status, playerInput: String): IO[Result] = game.drop(s, playerInput).pure[IO]
+  private final val point = """(\d) (\d)""".r
+  protected def validate(in: String): Option[Point] = in match {
+    case point(i, j) => Point(i.toInt, j.toInt).some
+    case _           => None
+  }
 
-  protected def displayResults(result: Result): IO[Unit] = putStrLn("Fin.")
+  protected def move(s: Status, maybePoint: Option[Point]): IO[Result] =
+    maybePoint match {
+      case Some(p) => game.drop(s, p).pure[IO]
+      case _       => IO { InvalidInput(s) }
+    }
+
+  protected def displayResults(result: Result): IO[Unit] = result match {
+    case Continue(_)     => ioUnit
+    case InvalidInput(_) => putStrLn("Invalid Input. please input n␣n format:EX. 0 0")
+    case Finish          => putStrLn("Winner: x")
+  }
 
 }

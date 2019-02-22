@@ -1,4 +1,4 @@
-import _root_.io.martinlover.ttt.controller.{Application, StdIOApplicationImpl}
+import io.martinlover.ttt.controller.{Application, StdIOApplicationImpl}
 import io.martinlover.ttt.usecase.{Game, TicTokToe}
 import scalaz.effect.{IO, SafeApp}
 
