@@ -16,15 +16,15 @@ class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
   override def run(): IO[Unit] =
     IO.tailrecM(turn)(Status())
 
-  protected def turn(s: Status): IO[Status \/ Unit] =
+  protected[controller] def turn(s: Status): IO[Status \/ Unit] =
     for {
       pi     <- playerInput(s.turn)
       result <- move(s, pi)
       _      <- displayResults(result)
     } yield {
       result match {
-        case Continue(s)     => -\/(s)
-        case InvalidInput(s) => -\/(s)
+        case Continue(c)     => -\/(c)
+        case InvalidInput(i) => -\/(i)
         case Finish          => \/-()
       }
     }
