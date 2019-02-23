@@ -11,7 +11,7 @@ import scalaz.{-\/, \/, \/-}
 trait Application {
   def run(): IO[Unit]
 }
-class StdIOApplicationImpl(game: Game) extends Application {
+class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
 
   override def run(): IO[Unit] =
     IO.tailrecM(turn)(Status())
@@ -31,8 +31,8 @@ class StdIOApplicationImpl(game: Game) extends Application {
 
   protected def playerInput(player: Player): IO[Option[Point]] =
     for {
-      _     <- putStr(s"Player ${player.displayName}: ")
-      input <- readLn
+      _     <- device.writeOutput(s"Player ${player.displayName}: ", false)
+      input <- device.readInput()
     } yield validate(input)
 
   private final val point = """(\d) (\d)""".r
@@ -49,8 +49,8 @@ class StdIOApplicationImpl(game: Game) extends Application {
 
   protected def displayResults(result: Result): IO[Unit] = result match {
     case Continue(_)     => ioUnit
-    case InvalidInput(_) => putStrLn("Invalid Input. please input n␣n format:EX. 0 0")
-    case Finish          => putStrLn("Winner: x")
+    case InvalidInput(_) => device.writeOutput("Invalid Input. please input n␣n format:EX. 0 0")
+    case Finish          => device.writeOutput("Winner: x")
   }
 
 }
