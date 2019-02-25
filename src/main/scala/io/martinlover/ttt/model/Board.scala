@@ -5,9 +5,8 @@ import io.martinlover.ttt.model.Board.Point
 class Board {
   private final val BoardSize = 3
 
-  def toSeq: Seq[Seq[Option[Player]]] = {
-    val itr = 0 until BoardSize
-    itr.map(i => itr.map(j => board.get(Point(i, j))))
+  def toSeq: Seq[Seq[Option[Player]]] = nestedSeq { (i, j) =>
+    board.get(Point(i, j))
   }
 
   def isReasonableMove(p: Point): Boolean =
@@ -19,8 +18,8 @@ class Board {
 
   private lazy val definedLines: Seq[Seq[(Int, Int)]] = {
     val itr             = 0 until BoardSize
-    val horizontalLines = itr.map(i => itr.map(j => (i, j)))
-    val verticalLines   = itr.map(i => itr.map(j => (j, i)))
+    val horizontalLines = nestedSeq((i, j) => (i, j))
+    val verticalLines   = nestedSeq((i, j) => (j, i))
     val crossedLines    = Seq(itr.map(i => (i, i))) ++ Seq(itr.map(i => (i, BoardSize - 1 - i)))
     verticalLines ++ horizontalLines ++ crossedLines
   }
@@ -30,6 +29,11 @@ class Board {
     }
     (line.size == BoardSize) && (line.groupBy(identity).size == 1)
   }
+
+  private val itr = 0 until BoardSize
+
+  private def nestedSeq[A](f: (Int, Int) => A): Seq[Seq[A]] =
+    itr.map(i => itr.map(j => f(i, j)))
 
   private[model] val board: Map[Point, Player]        = Map.empty
   private[model] def copy(kv: (Point, Player)): Board = Board(board + kv)
