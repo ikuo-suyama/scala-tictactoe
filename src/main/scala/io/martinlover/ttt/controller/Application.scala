@@ -1,7 +1,7 @@
 package io.martinlover.ttt.controller
 
 import io.martinlover.ttt.model.Board.Point
-import io.martinlover.ttt.model.Player
+import io.martinlover.ttt.model.{Board, Player}
 import io.martinlover.ttt.usecase._
 import scalaz.Scalaz._
 import scalaz.effect.IO
@@ -53,4 +53,5 @@ class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
     case Finish          => device.writeOutput("Winner: x")
   }
 
+  protected def transformBorad(board: Board): String = ???
 }

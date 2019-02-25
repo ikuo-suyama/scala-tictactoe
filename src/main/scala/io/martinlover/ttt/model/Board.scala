@@ -5,12 +5,17 @@ import io.martinlover.ttt.model.Board.Point
 class Board {
   private final val BoardSize = 3
 
+  def toSeq: Seq[Seq[Option[Player]]] = {
+    val itr = 0 until BoardSize
+    itr.map(i => itr.map(j => board.get(Point(i, j))))
+  }
+
   def isReasonableMove(p: Point): Boolean =
     (Seq(p.i, p.j) forall { n =>
       0 <= n && n < BoardSize
     }) && !board.contains(p)
 
-  def isFinished(): Boolean = definedLines exists isUnifiedLine
+  def isFinished: Boolean = definedLines exists isUnifiedLine
 
   private lazy val definedLines: Seq[Seq[(Int, Int)]] = {
     val itr             = 0 until BoardSize

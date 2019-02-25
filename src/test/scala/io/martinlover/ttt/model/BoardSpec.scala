@@ -69,13 +69,39 @@ class BoardSpec extends Specification with Mockito with Tables {
         Seq((0, 2, White), (1, 1, White), (2, 0, White)) ! true |
         // black
         Seq((0, 0, Black), (0, 1, Black), (0, 2, Black)) ! true |> { (score, ret) =>
-        val board = score.foldLeft(new Board) { (brd, move) =>
-          val (i, j, plyer) = move
-          Board.drop(brd, plyer, Point(i, j))
-        }
-        board.isFinished() must beEqualTo(ret)
+        val board = play(score)
+        board.isFinished must beEqualTo(ret)
+      }
+    }
+    "false when no line has 3-sequenced symbol" in {
+      "patterns(i,j,p)" | "ret" |
+        Seq((0, 0, White)) ! false |
+        Seq((0, 0, White), (0, 2, White)) ! false |
+        Seq((0, 0, White), (0, 1, Black), (0, 2, White)) ! false |> { (score, ret) =>
+        val board = play(score)
+        board.isFinished must beEqualTo(ret)
       }
     }
   }
 
+  "toSeq" should {
+    import scalaz.Scalaz._
+    "board Map to nested Seq" in {
+      val score = Seq((0, 0, Black), (1, 1, White), (0, 2, Black))
+      val board = play(score)
+      board.toSeq must beEqualTo(
+        Seq(
+          Seq(Black.some, None,       Black.some),
+          Seq(None,       White.some, None),
+          Seq(None,       None,       None)
+        )
+      )
+    }
+  }
+
+  def play(score: Seq[(Int, Int, Player)]): Board =
+    score.foldLeft(new Board) { (brd, move) =>
+      val (i, j, plyer) = move
+      Board.drop(brd, plyer, Point(i, j))
+    }
 }
