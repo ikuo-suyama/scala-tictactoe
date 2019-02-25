@@ -48,10 +48,10 @@ class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
     }
 
   protected def displayResults(result: Result): IO[Unit] = result match {
-    case Continue(_)     => ioUnit
+    case Continue(s)     => device.writeOutput(transformBorad(s.board))
     case InvalidInput(_) => device.writeOutput("Invalid Input. please input n␣n format:EX. 0 0")
     case Finish          => device.writeOutput("Winner: x")
   }
 
-  protected def transformBorad(board: Board): String = ???
+  protected def transformBorad(board: Board): String = board.toSeq.mkString(",")
 }

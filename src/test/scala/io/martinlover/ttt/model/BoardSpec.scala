@@ -70,7 +70,7 @@ class BoardSpec extends Specification with Mockito with Tables {
         // black
         Seq((0, 0, Black), (0, 1, Black), (0, 2, Black)) ! true |> { (score, ret) =>
         val board = play(score)
-        board.isFinished must beEqualTo(ret)
+        board.isContinuable must beEqualTo(ret)
       }
     }
     "false when no line has 3-sequenced symbol" in {
@@ -79,7 +79,7 @@ class BoardSpec extends Specification with Mockito with Tables {
         Seq((0, 0, White), (0, 2, White)) ! false |
         Seq((0, 0, White), (0, 1, Black), (0, 2, White)) ! false |> { (score, ret) =>
         val board = play(score)
-        board.isFinished must beEqualTo(ret)
+        board.isContinuable must beEqualTo(ret)
       }
     }
   }

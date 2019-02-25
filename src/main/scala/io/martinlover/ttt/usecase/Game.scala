@@ -23,5 +23,5 @@ class TicTokToe extends Game {
     Right(Board.drop(status.board, status.turn, point))
 
   protected def checkGameOver(newBoard: Board, turn: Player): Either[Result, Unit] =
-    Either.cond(newBoard.isFinished, (), Finish)
+    Either.cond(newBoard.isContinuable, (), Finish)
 }

@@ -14,10 +14,9 @@ class Board {
       0 <= n && n < BoardSize
     }) && !board.contains(p)
 
-  def isFinished: Boolean = definedLines exists isUnifiedLine
+  def isContinuable: Boolean = !(definedLines exists isUnifiedLine)
 
   private lazy val definedLines: Seq[Seq[(Int, Int)]] = {
-    val itr             = 0 until BoardSize
     val horizontalLines = nestedSeq((i, j) => (i, j))
     val verticalLines   = nestedSeq((i, j) => (j, i))
     val crossedLines    = Seq(itr.map(i => (i, i))) ++ Seq(itr.map(i => (i, BoardSize - 1 - i)))
