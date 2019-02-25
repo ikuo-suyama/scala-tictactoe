@@ -52,4 +52,18 @@ class BoardSpec extends Specification with Mockito with Tables {
       b2.isReasonableMove(p2) must beTrue
     }
   }
+
+  "isFinished" should {
+    "true when player black has 3-sequenced symbol" in {
+      "patterns(i,j,p)" | "ret" |
+        Seq((0, 0, White), (0, 1, White), (0, 2, White)) ! true |> { (score, ret) =>
+        val board = score.foldLeft(new Board) { (brd, move) =>
+          val (i, j, plyer) = move
+          Board.drop(brd, plyer, Point(i, j))
+        }
+        board.isFinished() must beEqualTo(ret)
+      }
+    }
+  }
+
 }

@@ -10,7 +10,7 @@ class Board {
       0 <= n && n < BoardSize
     }) && !board.contains(p)
 
-  def isFinished(): Boolean = false
+  def isFinished(): Boolean = (0 until BoardSize) map { Point(0, _) } forall { board.get(_).isDefined }
 
   private[model] val board: Map[Point, Player]        = Map.empty
   private[model] def copy(kv: (Point, Player)): Board = Board(board + kv)
