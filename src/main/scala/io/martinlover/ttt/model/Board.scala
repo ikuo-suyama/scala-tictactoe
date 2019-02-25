@@ -10,7 +10,21 @@ class Board {
       0 <= n && n < BoardSize
     }) && !board.contains(p)
 
-  def isFinished(): Boolean = (0 until BoardSize) map { Point(0, _) } forall { board.get(_).isDefined }
+  def isFinished(): Boolean = definedLines exists isUnifiedLine
+
+  private lazy val definedLines: Seq[Seq[(Int, Int)]] = {
+    val itr             = 0 until BoardSize
+    val horizontalLines = itr.map(i => itr.map(j => (i, j)))
+    val verticalLines   = itr.map(i => itr.map(j => (j, i)))
+    val crossedLines    = Seq(itr.map(i => (i, i))) ++ Seq(itr.map(i => (i, BoardSize - 1 - i)))
+    verticalLines ++ horizontalLines ++ crossedLines
+  }
+  private def isUnifiedLine(l: Seq[(Int, Int)]): Boolean = {
+    val line = l.flatMap { ij =>
+      board.get(Point.tupled(ij))
+    }
+    (line.size == BoardSize) && (line.groupBy(identity).size == 1)
+  }
 
   private[model] val board: Map[Point, Player]        = Map.empty
   private[model] def copy(kv: (Point, Player)): Board = Board(board + kv)

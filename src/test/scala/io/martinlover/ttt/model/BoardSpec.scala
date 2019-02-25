@@ -54,9 +54,21 @@ class BoardSpec extends Specification with Mockito with Tables {
   }
 
   "isFinished" should {
-    "true when player black has 3-sequenced symbol" in {
+    "true when a line has 3-sequenced symbol" in {
       "patterns(i,j,p)" | "ret" |
-        Seq((0, 0, White), (0, 1, White), (0, 2, White)) ! true |> { (score, ret) =>
+        // horizontal
+        Seq((0, 0, White), (0, 1, White), (0, 2, White)) ! true |
+        Seq((1, 0, White), (1, 1, White), (1, 2, White)) ! true |
+        Seq((2, 0, White), (2, 1, White), (2, 2, White)) ! true |
+        // vertical
+        Seq((0, 0, White), (1, 0, White), (2, 0, White)) ! true |
+        Seq((0, 1, White), (1, 1, White), (2, 1, White)) ! true |
+        Seq((0, 2, White), (1, 2, White), (2, 2, White)) ! true |
+        // cross
+        Seq((0, 0, White), (1, 1, White), (2, 2, White)) ! true |
+        Seq((0, 2, White), (1, 1, White), (2, 0, White)) ! true |
+        // black
+        Seq((0, 0, Black), (0, 1, Black), (0, 2, Black)) ! true |> { (score, ret) =>
         val board = score.foldLeft(new Board) { (brd, move) =>
           val (i, j, plyer) = move
           Board.drop(brd, plyer, Point(i, j))
