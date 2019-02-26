@@ -1,7 +1,7 @@
 package io.martinlover.ttt.controller
 
 import io.martinlover.ttt.model.Board.Point
-import io.martinlover.ttt.model.{Black, Board, Player, White}
+import io.martinlover.ttt.model.Player
 import io.martinlover.ttt.usecase._
 import scalaz.Scalaz._
 import scalaz.effect.IO
@@ -25,13 +25,14 @@ class ApplicationImpl(device: DeviceAdapter, presenter: Presenter, game: Game) e
       result match {
         case Continue(c)     => -\/(c)
         case InvalidInput(i) => -\/(i)
+        case IllegalMove(i)  => -\/(i)
         case Finish          => \/-()
       }
     }
 
   protected def playerInput(player: Player): IO[Option[Point]] =
     for {
-      _     <- device.writeOutput(s"Player ${player.displayName}: ", false)
+      _     <- device.writeOutput(s"Player ${presenter.transformPlayer(player.some)}: ", false)
       input <- device.readInput()
     } yield validate(input)
 
@@ -50,6 +51,7 @@ class ApplicationImpl(device: DeviceAdapter, presenter: Presenter, game: Game) e
   protected def displayResults(result: Result): IO[Unit] = result match {
     case Continue(s)     => device.writeOutput(presenter.transformBorad(s.board))
     case InvalidInput(_) => device.writeOutput("Invalid Input. please input n␣n format:EX. 0 0")
+    case IllegalMove(_)  => device.writeOutput("You cannot move here.")
     case Finish          => device.writeOutput("Winner: x")
   }
 

@@ -17,7 +17,7 @@ class TicTokToe extends Game {
     } yield Continue(Status(newBoard, Player.switch(s.turn)))) fold (identity, identity)
 
   protected def checkReasonableMove(status: Status, point: Point): Either[Result, Unit] =
-    Either.cond(status.board.isReasonableMove(point), (), InvalidInput(status))
+    Either.cond(status.board.isReasonableMove(point), (), IllegalMove(status))
 
   protected def move(status: Status, point: Point): Either[Result, Board] =
     Right(Board.drop(status.board, status.turn, point))
