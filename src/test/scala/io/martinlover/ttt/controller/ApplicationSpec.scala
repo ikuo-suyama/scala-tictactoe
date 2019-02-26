@@ -1,7 +1,7 @@
 package io.martinlover.ttt.controller
 
 import io.martinlover.ttt.model.Board.Point
-import io.martinlover.ttt.usecase.{Continue, Finish, Game, Status}
+import io.martinlover.ttt.usecase._
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import scalaz.effect.IO
@@ -16,7 +16,7 @@ class ApplicationSpec extends Specification with ApplicationSpecHelper {
 
       device.readInput() returns IO { "a" }
 
-      game.drop(any(), any()) returns Finish
+      game.drop(any(), any()) returns Ending(c)
 
       val result = app.turn(c).unsafePerformIO()
 
@@ -30,7 +30,7 @@ class ApplicationSpec extends Specification with ApplicationSpecHelper {
 
       device.readInput() returns IO { "1 1" }
 
-      game.drop(c, Point(1, 1)) returns Finish
+      game.drop(c, Point(1, 1)) returns Ending(c)
 
       val result = app.turn(c).unsafePerformIO()
 
@@ -45,7 +45,7 @@ class ApplicationSpec extends Specification with ApplicationSpecHelper {
 
       device.readInput() returns IO { "1 2" }
 
-      game.drop(c, Point(1, 2)) returns Continue(n)
+      game.drop(c, Point(1, 2)) returns Next(n)
 
       val result = app.turn(c).unsafePerformIO()
 

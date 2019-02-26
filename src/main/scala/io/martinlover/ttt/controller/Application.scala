@@ -23,10 +23,8 @@ class ApplicationImpl(device: DeviceAdapter, presenter: Presenter, game: Game) e
       _      <- displayResults(result)
     } yield {
       result match {
-        case Continue(c)     => -\/(c)
-        case InvalidInput(i) => -\/(i)
-        case IllegalMove(i)  => -\/(i)
-        case Finish          => \/-()
+        case c: Continue => -\/(c.s)
+        case _: Finish   => \/-()
       }
     }
 
@@ -48,11 +46,16 @@ class ApplicationImpl(device: DeviceAdapter, presenter: Presenter, game: Game) e
       case _       => IO { InvalidInput(s) }
     }
 
-  protected def displayResults(result: Result): IO[Unit] = result match {
-    case Continue(s)     => device.writeOutput(presenter.transformBorad(s.board))
-    case InvalidInput(_) => device.writeOutput("Invalid Input. please input n␣n format:EX. 0 0")
-    case IllegalMove(_)  => device.writeOutput("You cannot move here.")
-    case Finish          => device.writeOutput("Winner: x")
+  protected def displayResults(result: Result): IO[Unit] = {
+    val displayBoard = presenter.transformBorad(result.s.board)
+    val message = result match {
+      case Next(s)         => ""
+      case InvalidInput(_) => "Invalid Input. please input n␣n format:EX. 0 0"
+      case IllegalMove(_)  => "You cannot move here."
+      case Draw(_)         => "The game is over. Draw"
+      case Ending(s)       => s"The game is over. Winner: ${presenter.transformPlayer(s.turn.some)}"
+    }
+    device.writeOutput(displayBoard + "\n" + message)
   }
 
 }
