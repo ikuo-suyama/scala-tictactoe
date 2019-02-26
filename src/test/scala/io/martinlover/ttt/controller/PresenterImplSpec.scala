@@ -1,14 +1,14 @@
-package io.martinlover.ttt.external
+package io.martinlover.ttt.controller
 
 import io.martinlover.ttt.model.Board.Point
 import io.martinlover.ttt.model.{Black, Board, Player, White}
 import org.specs2.mutable.Specification
 
-class StdIOPresenterImplSpec extends Specification {
+class PresenterImplSpec extends Specification {
 
   "transformBoard" should {
     "create String Board" in {
-      val presenter = new StdIOPresenterImpl
+      val presenter = new PresenterImpl
       val score     = Seq((0, 0, Black), (1, 1, White), (0, 2, Black))
       val board     = play(score)
 
