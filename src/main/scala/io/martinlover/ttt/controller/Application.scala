@@ -11,7 +11,7 @@ import scalaz.{-\/, \/, \/-}
 trait Application {
   def run(): IO[Unit]
 }
-class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
+class ApplicationImpl(device: DeviceAdapter, presenter: Presenter, game: Game) extends Application {
 
   override def run(): IO[Unit] =
     IO.tailrecM(turn)(Status())
@@ -48,22 +48,9 @@ class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
     }
 
   protected def displayResults(result: Result): IO[Unit] = result match {
-    case Continue(s)     => device.writeOutput(transformBorad(s.board))
+    case Continue(s)     => device.writeOutput(presenter.transformBorad(s.board))
     case InvalidInput(_) => device.writeOutput("Invalid Input. please input n␣n format:EX. 0 0")
     case Finish          => device.writeOutput("Winner: x")
-  }
-
-  protected def transformBorad(board: Board): String =
-    board.toSeq
-      .map {
-        _.map(transformPlayer).mkString(" ", " | ", " ")
-      }
-      .mkString("\n - | - | - \n")
-
-  protected def transformPlayer(maybePlayer: Option[Player]): String = maybePlayer match {
-    case Some(Black) => "☓"
-    case Some(White) => "○"
-    case _           => "  "
   }
 
 }

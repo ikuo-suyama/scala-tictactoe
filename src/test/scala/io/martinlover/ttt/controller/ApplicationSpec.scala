@@ -59,7 +59,8 @@ trait ApplicationSpecHelper extends Mockito {
   def createMocks() = {
     val device: DeviceAdapter = mock[DeviceAdapter]
     val game: Game            = mock[Game]
-    val app                   = new ApplicationImpl(device, game)
+    val presenter: Presenter  = mock[Presenter].smart
+    val app                   = new ApplicationImpl(device, presenter, game)
 
     device.writeOutput(any(), any()) returns IO.ioUnit
 
