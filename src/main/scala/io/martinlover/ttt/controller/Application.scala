@@ -1,7 +1,7 @@
 package io.martinlover.ttt.controller
 
 import io.martinlover.ttt.model.Board.Point
-import io.martinlover.ttt.model.{Board, Player}
+import io.martinlover.ttt.model.{Black, Board, Player, White}
 import io.martinlover.ttt.usecase._
 import scalaz.Scalaz._
 import scalaz.effect.IO
@@ -53,5 +53,17 @@ class ApplicationImpl(device: DeviceAdapter, game: Game) extends Application {
     case Finish          => device.writeOutput("Winner: x")
   }
 
-  protected def transformBorad(board: Board): String = board.toSeq.mkString(",")
+  protected def transformBorad(board: Board): String =
+    board.toSeq
+      .map {
+        _.map(transformPlayer).mkString(" ", " | ", " ")
+      }
+      .mkString("\n - | - | - \n")
+
+  protected def transformPlayer(maybePlayer: Option[Player]): String = maybePlayer match {
+    case Some(Black) => "☓"
+    case Some(White) => "○"
+    case _           => "  "
+  }
+
 }
