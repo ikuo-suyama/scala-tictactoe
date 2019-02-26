@@ -53,34 +53,69 @@ class BoardSpec extends Specification with Mockito with Tables {
     }
   }
 
-  "isContinuable" should {
+  "hasWinner" should {
     "false when a line has 3-sequenced symbol" in {
       "patterns(i,j,p)" | "ret" |
         // horizontal
-        Seq((0, 0, White), (0, 1, White), (0, 2, White)) ! false |
-        Seq((1, 0, White), (1, 1, White), (1, 2, White)) ! false |
-        Seq((2, 0, White), (2, 1, White), (2, 2, White)) ! false |
+        Seq((0, 0, White), (0, 1, White), (0, 2, White)) ! true |
+        Seq((1, 0, White), (1, 1, White), (1, 2, White)) ! true |
+        Seq((2, 0, White), (2, 1, White), (2, 2, White)) ! true |
         // vertical
-        Seq((0, 0, White), (1, 0, White), (2, 0, White)) ! false |
-        Seq((0, 1, White), (1, 1, White), (2, 1, White)) ! false |
-        Seq((0, 2, White), (1, 2, White), (2, 2, White)) ! false |
+        Seq((0, 0, White), (1, 0, White), (2, 0, White)) ! true |
+        Seq((0, 1, White), (1, 1, White), (2, 1, White)) ! true |
+        Seq((0, 2, White), (1, 2, White), (2, 2, White)) ! true |
         // cross
-        Seq((0, 0, White), (1, 1, White), (2, 2, White)) ! false |
-        Seq((0, 2, White), (1, 1, White), (2, 0, White)) ! false |
+        Seq((0, 0, White), (1, 1, White), (2, 2, White)) ! true |
+        Seq((0, 2, White), (1, 1, White), (2, 0, White)) ! true |
         // black
-        Seq((0, 0, Black), (0, 1, Black), (0, 2, Black)) ! false |> { (score, ret) =>
+        Seq((0, 0, Black), (0, 1, Black), (0, 2, Black)) ! true |
+        // black
+        Seq((0, 0, Black), (0, 1, Black), (0, 2, Black), (1, 1, White)) ! true |> { (score, ret) =>
         val board = play(score)
-        board.isContinuable must beEqualTo(ret)
+        board.hasWinner must beEqualTo(ret)
       }
     }
     "true when no line has 3-sequenced symbol" in {
       "patterns(i,j,p)" | "ret" |
-        Seq((0, 0, White)) ! true |
-        Seq((0, 0, White), (0, 2, White)) ! true |
-        Seq((0, 0, White), (0, 1, Black), (0, 2, White)) ! true |> { (score, ret) =>
+        Seq((0, 0, White)) ! false |
+        Seq((0, 0, White), (0, 2, White)) ! false |
+        Seq((0, 0, White), (0, 1, Black), (0, 2, White)) ! false |> { (score, ret) =>
         val board = play(score)
-        board.isContinuable must beEqualTo(ret)
+        board.hasWinner must beEqualTo(ret)
       }
+    }
+  }
+
+  "isDraw" should {
+    "true when no winner and board is filled" in {
+      val score = Seq(
+        (0, 0, Black),
+        (0, 1, Black),
+        (0, 2, White),
+        (1, 0, White),
+        (1, 1, Black),
+        (1, 2, Black),
+        (2, 0, Black),
+        (2, 1, White),
+        (2, 2, White)
+      )
+      val board = play(score)
+      board.isDraw must beEqualTo(true)
+    }
+    "false when" in {
+      val score = Seq(
+        (0, 0, White),
+        (0, 1, White),
+        (0, 2, White),
+        (1, 0, Black),
+        (1, 1, White),
+        (1, 2, Black),
+        (2, 0, White),
+        (2, 1, Black),
+        (2, 2, White)
+      )
+      val board = play(score)
+      board.isDraw must beEqualTo(false)
     }
   }
 

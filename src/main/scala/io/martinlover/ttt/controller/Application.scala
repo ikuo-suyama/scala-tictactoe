@@ -49,11 +49,11 @@ class ApplicationImpl(device: DeviceAdapter, presenter: Presenter, game: Game) e
   protected def displayResults(result: Result): IO[Unit] = {
     val displayBoard = presenter.transformBorad(result.s.board)
     val message = result match {
-      case Next(s)         => ""
-      case InvalidInput(_) => "Invalid Input. please input n␣n format:EX. 0 0"
-      case IllegalMove(_)  => "You cannot move here."
-      case Draw(_)         => "The game is over. Draw"
-      case Ending(s)       => s"The game is over. Winner: ${presenter.transformPlayer(s.turn.some)}"
+      case _: Next         => ""
+      case _: InvalidInput => "Invalid Input. please input n␣n format:EX. 0 0"
+      case _: IllegalMove  => "You cannot move here."
+      case _: Draw         => "The game is over. Draw"
+      case _: Ending       => s"The game is over. Winner: ${presenter.transformPlayer(result.s.turn.some)}"
     }
     device.writeOutput(displayBoard + "\n" + message)
   }
